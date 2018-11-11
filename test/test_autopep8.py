@@ -4753,6 +4753,61 @@ raise ValueError("error")
         with autopep8_context(line, options=['--aggressive', '--pep8-passes', '5']) as result:
             self.assertEqual(fixed, result)
 
+    def test_w605_multiline_escape_strong(self):
+        line = r'''""" This line has an escape \w"""'''
+        fixed = r'''r""" This line has an escape \w"""
+'''
+        with autopep8_context(line, options=['--aggressive']) as result:
+            self.assertEqual(fixed, result)
+
+        line = r'''""" This line has two \w escape \w"""'''
+        fixed = r'''r""" This line has two \w escape \w"""
+'''
+        with autopep8_context(line, options=['--aggressive']) as result:
+            self.assertEqual(fixed, result)
+
+        print("***Starting bad stuff***")
+        line = r'''""" This line has
+escape \w on
+three lines"""'''
+        fixed = r'''r""" This line has
+escape \w on
+three lines"""
+'''
+        with autopep8_context(line, options=['--aggressive', '--pep8-passes', '1']) as result:
+            self.assertEqual(fixed, result)
+
+        line = r'''""" This line has two \w
+escape \w on two lines"""'''
+        fixed = r'''r""" This line has two \w
+escape \w on two lines"""
+'''
+        with autopep8_context(line, options=['--aggressive', '--pep8-passes', '1']) as result:
+            self.assertEqual(fixed, result)
+
+        line = r'''def foo():
+    """ This docstring has an escape \w"""'''
+        fixed = r'''def foo():
+    r""" This docstring has an escape \w"""
+'''
+        with autopep8_context(line, options=['--aggressive']) as result:
+            self.assertEqual(fixed, result)
+
+        line = r'''\
+def foo():
+    """ 
+    This multiline docstring has an escape \w
+    """'''
+        fixed = r'''\
+def foo():
+    r"""
+    This multiline docstring has an escape \w
+    """
+'''
+        with autopep8_context(line, options=['--aggressive']) as result:
+            self.assertEqual(fixed, result)
+
+
     def test_trailing_whitespace_in_multiline_string(self):
         line = 'x = """ \nhello"""    \n'
         fixed = 'x = """ \nhello"""\n'

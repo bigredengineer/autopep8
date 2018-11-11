@@ -1344,7 +1344,8 @@ class FixPEP8(object):
                                                             self.source)
         try:
             tokens = list(generate_tokens(target))
-        except (SyntaxError, tokenize.TokenError):
+        except (SyntaxError, tokenize.TokenError) as e:
+            print("****Exception!  %s" % e)
             return
         for (pos, _msg) in get_w605_position(tokens):
             self.source[line_index] = '{}r{}'.format(
@@ -3194,7 +3195,8 @@ def multiline_string_lines(source, include_docstrings=False):
     line_numbers = set()
     previous_token_type = ''
     try:
-        for t in generate_tokens(source):
+        tokens = generate_tokens(source)
+        for t in tokens:
             token_type = t[0]
             start_row = t[2][0]
             end_row = t[3][0]
@@ -3209,7 +3211,8 @@ def multiline_string_lines(source, include_docstrings=False):
                     line_numbers |= set(range(1 + start_row, 1 + end_row))
 
             previous_token_type = token_type
-    except (SyntaxError, tokenize.TokenError):
+    except (SyntaxError, tokenize.TokenError) as e:
+        print("@@@ Token Exception! %s" % e)
         pass
 
     return line_numbers
